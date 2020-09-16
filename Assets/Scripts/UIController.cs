@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -7,12 +8,10 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     [SerializeField]
-    private Text levelText;
+    private TextMeshProUGUI levelText;
 
     void Awake()
     {
-        GameObject.Find("LevelText").GetComponent<Text>().text = (SceneManager.GetActiveScene().buildIndex + 1).ToString();
+        GameObject.Find("LevelText").GetComponent<TextMeshProUGUI>().text = (SceneManager.GetActiveScene().buildIndex + 1).ToString();
     }
-
-    
 }

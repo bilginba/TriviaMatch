@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class AddButtons : MonoBehaviour
 {
@@ -17,8 +18,9 @@ public class AddButtons : MonoBehaviour
     
     void Awake()
     {
+
         info = Resources.Load<Info>("Infos/" + SceneManager.GetActiveScene().name);
-        int buttonCount = info.left_side.Length + info.right_side.Length;
+        int buttonCount = info.left_side.Count + info.right_side.Count;
         for(int i=0; i< buttonCount; i++)
         {
             GameObject button = Instantiate(btn);
@@ -27,14 +29,12 @@ public class AddButtons : MonoBehaviour
         }
 
 
-        if(buttonCount < 10)
-        {
-            puzzlePanel.GetComponent<GridLayoutGroup>().constraintCount = 2;
-        }
-        else if(buttonCount >= 10)
-        {
-            puzzlePanel.GetComponent<GridLayoutGroup>().constraintCount = 3;
-        }
+        puzzlePanel.GetComponent<GridLayoutGroup>().cellSize = new Vector2(80, 40);
+        puzzlePanel.GetComponent<GridLayoutGroup>().constraintCount = 2;
+        puzzlePanel.GetComponent<GridLayoutGroup>().spacing = new Vector2(40, 20);
+
+        
+         
         
     }
 

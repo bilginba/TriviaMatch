@@ -7,17 +7,18 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     [SerializeField]
-    private Sprite backgroundImg;
-
+    private Sprite buttonImg = null;
+    [SerializeField]
+    private Sprite pressedBtnImg = null;
     private Info info;
 
     public List<Dictionary<string, int>> puzzleValues;
 
     public List<Button> btns = new List<Button>();
-
-    private int guessCount;
-    private int countCorrect;
-    private int gameGuesses;
+    [SerializeField]
+    private LineRenderer lineRenderer;
+    private Vector3 leftPos;
+    private Vector3 rightPos;
 
     private bool firstGuess, secondGuess;
     private int firstGuessIndex, secondGuessIndex;
@@ -28,6 +29,7 @@ public class GameController : MonoBehaviour
     }
     void Start()
     {
+        lineRenderer = FindObjectOfType<Canvas>().GetComponent<LineRenderer>();
         GetButtons();
         AddButtonListeners();
         info.AddInfos();
@@ -40,7 +42,6 @@ public class GameController : MonoBehaviour
         for(int i=0; i<gameObjs.Length; i++)
         {
             btns.Add(gameObjs[i].GetComponent<Button>());
-            btns[i].image.sprite = backgroundImg;
         }
     }
 
@@ -55,9 +56,9 @@ public class GameController : MonoBehaviour
     void LoadPuzzleContent()
     {
         string tempInfo;
-        for (int i = 0; i < info.right_side.Length; i++)
+        for (int i = 0; i < info.right_side.Count; i++)
         {
-            int rnd = Random.Range(0, info.right_side.Length);
+            int rnd = Random.Range(0, info.right_side.Count);
             tempInfo = info.right_side[rnd];
             info.right_side[rnd] = info.right_side[i];
             info.right_side[i] = tempInfo;
@@ -79,20 +80,27 @@ public class GameController : MonoBehaviour
 
     public void SelectButton()
     {
-        string name = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
-        if (!firstGuess)
+        if(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
         {
-            firstGuess = true;
-            firstGuessIndex = int.Parse(name);
-            firstSelectionID = info.infoContents[btns[firstGuessIndex].GetComponent<Button>().GetComponentInChildren<Text>().text];
-        }
-        else if (!secondGuess)
-        {
-            guessCount++;
-            secondGuess = true;
-            secondGuessIndex = int.Parse(name);
-            secondSelectionID = info.infoContents[btns[secondGuessIndex].GetComponent<Button>().GetComponentInChildren<Text>().text];
-            StartCoroutine(CheckMatches());
+            string name = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
+            if (!firstGuess)
+            {
+                firstGuess = true;
+                firstGuessIndex = int.Parse(name);
+                firstSelectionID = info.infoContents[btns[firstGuessIndex].GetComponent<Button>().GetComponentInChildren<Text>().text];
+                //origin = btns[firstGuessIndex].transform;
+                leftPos = new Vector3(btns[firstGuessIndex].transform.position.x, btns[firstGuessIndex].transform.position.y, btns[firstGuessIndex].transform.position.z);
+
+            }
+            else if (!secondGuess)
+            {
+                secondGuess = true;
+                secondGuessIndex = int.Parse(name);
+                secondSelectionID = info.infoContents[btns[secondGuessIndex].GetComponent<Button>().GetComponentInChildren<Text>().text];
+                StartCoroutine(CheckMatches());
+                //destination = btns[secondGuessIndex].transform;
+                rightPos = new Vector3(btns[secondGuessIndex].transform.position.x, btns[secondGuessIndex].transform.position.y, btns[secondGuessIndex].transform.position.z);
+            }
         }
     }
 
@@ -103,10 +111,18 @@ public class GameController : MonoBehaviour
         {
             if(btns[firstGuessIndex].name != btns[secondGuessIndex].name)
             {
+                SpriteState firstSpriteState = new SpriteState();
+                SpriteState secondSpriteState = new SpriteState();
                 btns[firstGuessIndex].interactable = false;
-                btns[firstGuessIndex].GetComponent<Image>().color = Color.green;
+                firstSpriteState = btns[firstGuessIndex].spriteState;
+                firstSpriteState.pressedSprite = pressedBtnImg;
                 btns[secondGuessIndex].interactable = false;
-                btns[secondGuessIndex].GetComponent<Image>().color = Color.green;
+                secondSpriteState = btns[firstGuessIndex].spriteState;
+                secondSpriteState.pressedSprite = pressedBtnImg;
+
+                lineRenderer.SetPosition(0, leftPos);
+                lineRenderer.SetPosition(1, rightPos);
+                lineRenderer.startWidth = 0.2f;
 
                 isGameFinished();
             }
@@ -134,7 +150,7 @@ public class GameController : MonoBehaviour
     {
         for (int i = 0; i < btns.Count; i++)
         {
-            if (btns[i].GetComponent<Image>().color != Color.green)
+            if (btns[i].interactable == true)
             {
                 return;
             }

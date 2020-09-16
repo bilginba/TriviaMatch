@@ -13,16 +13,10 @@ MonoBehaviour:
   m_Name: Level03
   m_EditorClassIdentifier: 
   left_side:
-  - Franz
-  - Luis
-  - Zinedine
-  - Cristiano
-  - Diego
-  - Lionel
+  - Sabahattin Ali
+  - Jane Austen
+  - Goethe
   right_side:
-  - Beckenbauer
-  - Figo
-  - Zidane
-  - Ronaldo
-  - Maradona
-  - Messi
+  - "K\xFCrk Mantolu Madonna"
+  - "Gurur ve \xD6nyarg\u0131"
+  - "Gen\xE7 Werther'in Ac\u0131lar\u0131"
